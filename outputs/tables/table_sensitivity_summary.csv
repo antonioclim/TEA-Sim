@@ -1,7 +1,0 @@
-driver,perturbation,interpretation
-Signature profile,Classical to ML-DSA-44-sized evidence,Largest storage driver; approximately +164 MB in S2/A3.
-Patient count,±50%,Nearly linear effect on evidence volume and storage.
-Simulation horizon,±50%,Nearly linear effect because daily anchors and provenance scale by day.
-Organisational multiplicity,3 organisations to 2 or 4,Large effect on A3 because replicated evidence scales with organisational count.
-Access rate,±50%,Primary driver of verification effort; smaller effect on total storage.
-Revocation probability,±50%,Low storage effect at tested rates but important for governance complexity and policy checking.
