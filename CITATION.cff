@@ -1,19 +1,17 @@
 cff-version: 1.2.0
-title: "TEA-Sim: Reproducibility Package for a FHIR-Native Trust-Evidence Architecture Simulation"
+title: "TEA-Sim: Reproducibility Package for a FHIR-Compatible Trust-Evidence Architecture Simulation"
 message: "If you use this package, please cite it."
 type: software
 authors:
   - family-names: "Clim"
     given-names: "Antonio"
     affiliation: "The Bucharest University of Economic Studies"
-  - family-names: "Zota"
-    given-names: "Răzvan Daniel"
-    affiliation: "The Bucharest University of Economic Studies"
-  - family-names: "Constantinescu"
-    given-names: "Radu"
-    affiliation: "The Bucharest University of Economic Studies"
-version: "1.0.0"
-date-released: "2026-05-26"
+    orcid: "https://orcid.org/0000-0003-4745-0431"
+version: "1.0.1"
+date-released: "YYYY-MM-DD"
+doi: "10.5281/zenodo.20587315"
+url: "https://doi.org/10.5281/zenodo.20587315"
+repository-code: "https://github.com/antonioclim/TEA-Sim"
 keywords:
   - mHealth
   - FHIR
