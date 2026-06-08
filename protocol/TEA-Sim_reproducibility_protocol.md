@@ -1,38 +1,36 @@
 # TEA-Sim Reproducibility Protocol
 
-## Study title
-Simulation-Based Design and Evaluation of a FHIR-Native Trust-Evidence Architecture for Auditable Mobile Health Information Exchange.
+## Purpose
 
-## Study type
-Simulation-based design science research.
+This protocol defines the reproducibility boundary for TEA-Sim, a virtual simulation model comparing three trust-evidence storage architectures for auditable mobile health information exchange.
 
-## Research questions
-1. How can a FHIR-compatible mobile health information architecture formally separate clinical payloads from verifiable trust evidence?
-2. How do central audit logs, append-only hash logs and ledger-like trust layers compare under simulated mHealth workloads?
-3. Under which governance and workload conditions is a ledger-like trust-evidence layer justified?
+## Study boundary
 
-## Data boundary
-No identifiable patient data are used. No clinical deployment is conducted. The model uses synthetic patient-count assumptions, public wearable/continuous-glucose-monitoring sampling characteristics, standards-informed cryptographic signature-size parameters and scenario-based governance assumptions.
+The model is not a clinical deployment, not a production FHIR implementation, not a blockchain benchmark and not a post-quantum cryptographic runtime test. It is a simulation-based design science artefact for comparing evidence-storage trade-offs under transparent assumptions.
 
-## Simulation settings
-- Seed: 20260526
-- Replications per scenario: 1000
-- Patients per scenario: 1000
-- Horizon: 10 days
-- Architectures: A1, A2 and A3
-- Scenarios: S1 to S5 as defined in `data/scenario_matrix.csv`
+## Architecture variants
 
-## Primary outputs
-Evidence object count; storage MB; evidence/payload percentage; normalised verification units; privacy exposure proxy; threat-scenario coverage; Ledger Justification Index.
+- A1: central audit log.
+- A2: append-only hash log.
+- A3: ledger-like trust layer.
 
-## Exclusions
-The study does not report FHIR server performance, blockchain throughput, real cryptographic runtime, clinical outcomes, usability or patient behaviour.
+Clinical payloads remain outside the evidence layer in all variants.
 
-## Confirmatory run
-The confirmatory run is the execution of `bash run_all.sh` using the committed package state and fixed seed above.
+## Scenarios
 
-## Registration status
-This document is a reproducibility protocol for the confirmatory simulation package. It should not be described as a prospective pre-study registration unless it is locked before the final confirmatory run.
+The model uses five scenarios: low-complexity direct care, interorganisational shared care, secondary-use governance, high-dispute/high-revocation and crypto-agility transition.
+
+## Reproducibility settings
+
+- Random seed: 20260526.
+- Replications per scenario: 1000.
+- Patients per scenario: 1000.
+- Simulation horizon: 10 days.
 
 ## Canonical outputs
-The canonical numerical outputs are the CSV files produced by `bash run_all.sh` and stored in `outputs/tables/`.
+
+The canonical numerical outputs are the CSV files in `outputs/tables/`. Formatted tables in articles or reports should be checked against these CSV files.
+
+## Interpretation limits
+
+Scenario-based parameters are not empirical estimates. Threat coverage is a design-based matrix. Write and verification costs are normalised model units and not production latency measurements.

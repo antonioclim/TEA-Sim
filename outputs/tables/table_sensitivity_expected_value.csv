@@ -1,0 +1,12 @@
+base_scenario,base_architecture,driver,perturbation,storage_mb_base,storage_mb_perturbed,delta_storage_mb,write_cost_units_base,write_cost_units_perturbed,delta_write_cost_units,verification_units_base,verification_units_perturbed,delta_verification_units
+S2,A3 Ledger-like,Signature profile,Classical to ML-DSA-44-sized evidence,63.2,227.2,164.0,95256,95256,0,21700,21700,0
+S2,A3 Ledger-like,Patient count,-50%,63.2,31.6,-31.6,95256,47628,-47628,21700,10850,-10850
+S2,A3 Ledger-like,Patient count,+50%,63.2,94.8,31.6,95256,142884,47628,21700,32550,10850
+S2,A3 Ledger-like,Simulation horizon,-50%,63.2,33.0,-30.2,95256,49694,-45563,21700,10850,-10850
+S2,A3 Ledger-like,Simulation horizon,+50%,63.2,93.5,30.2,95256,140818,45562,21700,32550,10850
+S2,A3 Ledger-like,Organisational multiplicity,3 organisations to 2,63.2,42.1,-21.1,95256,63504,-31752,21700,21700,0
+S2,A3 Ledger-like,Organisational multiplicity,3 organisations to 4,63.2,84.3,21.1,95256,127008,31752,21700,21700,0
+S2,A3 Ledger-like,Access rate,-50%,63.2,59.9,-3.4,95256,90194,-5062,21700,10850,-10850
+S2,A3 Ledger-like,Access rate,+50%,63.2,66.6,3.4,95256,100318,5062,21700,32550,10850
+S2,A3 Ledger-like,Revocation probability,-50%,63.2,63.2,-0.0,95256,95216,-40,21700,21700,0
+S2,A3 Ledger-like,Revocation probability,+50%,63.2,63.2,0.0,95256,95297,40,21700,21700,0

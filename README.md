@@ -1,6 +1,14 @@
 # TEA-Sim JCIS Reproducibility Package
 
-This archive contains the reproducibility materials for the study **Simulation-Based Design and Evaluation of a FHIR-Native Trust-Evidence Architecture for Auditable Mobile Health Information Exchange**.
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20587315.svg)](https://doi.org/10.5281/zenodo.20587315)
+
+This archive contains the reproducibility materials for the study **Simulation-Based Design and Evaluation of a FHIR-Compatible Trust-Evidence Architecture for Auditable Mobile Health Information Exchange**.
+
+## Archived record
+
+Preserved Zenodo record: <https://doi.org/10.5281/zenodo.20587315>
+
+Source repository: <https://github.com/antonioclim/TEA-Sim>
 
 ## Scope
 
@@ -23,7 +31,12 @@ pip install -r src/requirements.txt
 bash run_all.sh
 ```
 
-On Windows, activate the environment with `.venv\\Scripts\\activate` and then run the Python commands directly if Bash is unavailable.
+On Windows, activate the environment with `.venv\\Scripts\\activate` and then run the Python commands directly if Bash is unavailable:
+
+```bash
+python src/teasim_reproduce.py --root .
+python src/make_checksums.py
+```
 
 ### Conda
 
@@ -70,3 +83,7 @@ python src/make_checksums.py
 ```
 
 The checksum manifest is stored in `SHA256SUMS.txt`.
+
+## Citation
+
+Clim, A. (2026). *TEA-Sim: Reproducibility package for a FHIR-compatible trust-evidence architecture simulation* (Version 1.0.1) [Computer software]. Zenodo. https://doi.org/10.5281/zenodo.20587315

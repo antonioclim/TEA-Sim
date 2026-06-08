@@ -1,19 +1,15 @@
-#!/usr/bin/env python3
-"""TEA-Sim reproducibility script.
-
-This script produces the simulation tables and figures for TEA-Sim. It is not
-a clinical implementation, FHIR server, blockchain deployment or cryptographic
-runtime benchmark. It is a virtual simulation of architectural trade-offs.
-"""
-from pathlib import Path
 import argparse
+import csv
 import struct
 import zlib
+from pathlib import Path
+
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 
 ARCHITECTURES = ["A1 Central audit", "A2 Hash log", "A3 Ledger-like"]
+SCENARIO_ORDER = ["S1", "S2", "S3", "S4", "S5"]
 
 THREAT_ROWS = [
     ["Payload modified after anchoring", "High if commitment exists", "High", "High", "All architectures can detect this if payload commitments are preserved."],
@@ -25,42 +21,36 @@ THREAT_ROWS = [
     ["Metadata exposure risk", "Low-medium", "Medium", "High", "The privacy cost of A3 must be mitigated by minimisation and pseudonymisation."],
 ]
 
-SENSITIVITY_ROWS = [
-    ["Signature profile", "Classical to ML-DSA-44-sized evidence", "Largest storage driver; approximately +164 MB in S2/A3."],
-    ["Patient count", "±50%", "Nearly linear effect on evidence volume and storage."],
-    ["Simulation horizon", "±50%", "Nearly linear effect because daily anchors and provenance scale by day."],
-    ["Organisational multiplicity", "3 organisations to 2 or 4", "Large effect on A3 because replicated evidence scales with organisational count."],
-    ["Access rate", "±50%", "Primary driver of verification effort; smaller effect on total storage."],
-    ["Revocation probability", "±50%", "Low storage effect at tested rates but important for governance complexity and policy checking."],
-]
 
-
-def load_params(data_dir: Path):
-    params_df = pd.read_csv(data_dir / "parameter_register.csv")
+def read_parameter_table(data_dir: Path):
+    df = pd.read_csv(data_dir / "parameter_register.csv")
     params = {}
-    for k, v in zip(params_df["parameter"], params_df["value"]):
+    for _, row in df.iterrows():
+        key = row["parameter"]
+        value = row["value"]
         try:
-            params[k] = float(v)
-        except Exception:
-            params[k] = v
-    return params_df, params
+            params[key] = float(value)
+        except ValueError:
+            params[key] = value
+    return df, params
 
 
-def percentile_interval(values, lower=2.5, upper=97.5):
-    return int(np.floor(np.percentile(values, lower))), int(np.ceil(np.percentile(values, upper)))
+def percentile_interval(values, low=2.5, high=97.5):
+    lo, hi = np.percentile(values, [low, high])
+    return int(round(lo)), int(round(hi))
 
 
-def simulate_event_counts(scenario, params, rng):
+def simulate_event_counts(scenario_row, params, rng):
     patients = int(params["patients_per_scenario"])
     days = int(params["simulation_horizon_days"])
     obs_per_day = int(params["aggregated_observations_per_patient_day"])
-    access_rate = float(scenario["access_rate_per_patient_day"])
-    rev_prob = float(scenario["revocation_probability_over_horizon"])
+    rev_p = float(scenario_row["revocation_probability_over_horizon"])
+    access_rate = float(scenario_row["access_rate_per_patient_day"])
     daily_integrity_anchors = patients * days
     daily_provenance_assertions = patients * days
     consent_grants = patients
-    revocations = rng.binomial(n=patients, p=rev_prob)
-    access_events = rng.poisson(lam=patients * days * access_rate)
+    revocations = rng.binomial(patients, rev_p)
+    access_events = rng.poisson(patients * days * access_rate)
     total_evidence_objects = daily_integrity_anchors + daily_provenance_assertions + consent_grants + revocations + access_events
     conceptual_observations = patients * days * obs_per_day
     return {
@@ -74,24 +64,57 @@ def simulate_event_counts(scenario, params, rng):
     }
 
 
-def storage_mb(evidence_objects, architecture, orgs, profile, params):
+def expected_event_counts(scenario_row, params, patients=None, days=None, organisations=None, access_rate=None, revocation_probability=None, signature_profile=None):
+    p = int(patients if patients is not None else params["patients_per_scenario"])
+    d = int(days if days is not None else params["simulation_horizon_days"])
+    obs_per_day = int(params["aggregated_observations_per_patient_day"])
+    rev_p = float(revocation_probability if revocation_probability is not None else scenario_row["revocation_probability_over_horizon"])
+    acc = float(access_rate if access_rate is not None else scenario_row["access_rate_per_patient_day"])
+    revocations = p * rev_p
+    access_events = p * d * acc
+    anchors = p * d
+    provenance = p * d
+    consents = p
+    evidence = anchors + provenance + consents + revocations + access_events
+    observations = p * d * obs_per_day
+    return {
+        "daily_integrity_anchors": anchors,
+        "daily_provenance_assertions": provenance,
+        "consent_grants": consents,
+        "revocations": revocations,
+        "access_events": access_events,
+        "evidence_objects": evidence,
+        "conceptual_observations": observations,
+    }
+
+
+def evidence_size_bytes(architecture, orgs, profile, params):
     if profile == "classical":
         if architecture == "A1 Central audit":
-            b, multiplier = params["trust_evidence_a1_classical_bytes"], 1
-        elif architecture == "A2 Hash log":
-            b, multiplier = params["trust_evidence_a2_classical_bytes"], 1
-        else:
-            b, multiplier = params["trust_evidence_a3_classical_bytes_per_org"], orgs
-    elif profile == "mldsa44":
+            return params["trust_evidence_a1_classical_bytes"], 1
+        if architecture == "A2 Hash log":
+            return params["trust_evidence_a2_classical_bytes"], 1
+        return params["trust_evidence_a3_classical_bytes_per_org"], orgs
+    if profile == "mldsa44":
         if architecture == "A1 Central audit":
-            b, multiplier = params["trust_evidence_a1_mldsa44_bytes"], 1
-        elif architecture == "A2 Hash log":
-            b, multiplier = params["trust_evidence_a2_mldsa44_bytes"], 1
-        else:
-            b, multiplier = params["trust_evidence_a3_mldsa44_bytes_per_org"], orgs
-    else:
-        raise ValueError(f"Unknown signature profile: {profile}")
+            return params["trust_evidence_a1_mldsa44_bytes"], 1
+        if architecture == "A2 Hash log":
+            return params["trust_evidence_a2_mldsa44_bytes"], 1
+        return params["trust_evidence_a3_mldsa44_bytes_per_org"], orgs
+    raise ValueError(f"Unknown signature profile: {profile}")
+
+
+def storage_mb(evidence_objects, architecture, orgs, profile, params):
+    b, multiplier = evidence_size_bytes(architecture, orgs, profile, params)
     return evidence_objects * b * multiplier / 1_000_000
+
+
+def write_cost_units(evidence_objects, architecture, orgs, params):
+    if architecture == "A1 Central audit":
+        return evidence_objects * params["write_factor_a1"]
+    if architecture == "A2 Hash log":
+        return evidence_objects * params["write_factor_a2"]
+    return evidence_objects * params["write_factor_a3"] * orgs
 
 
 def verification_units(access_events, architecture, params):
@@ -128,7 +151,6 @@ def preferred_architecture(lji_value):
 
 
 def strip_png_text_chunks(path: Path):
-    """Remove non-critical textual/time chunks from a PNG while preserving pixels."""
     data = path.read_bytes()
     signature = b"\x89PNG\r\n\x1a\n"
     if not data.startswith(signature):
@@ -142,11 +164,7 @@ def strip_png_text_chunks(path: Path):
         chunk_data = data[offset + 8:offset + 8 + length]
         crc = data[offset + 8 + length:offset + 12 + length]
         if chunk_type not in removable:
-            if len(crc) == 4:
-                kept.append(data[offset:offset + 12 + length])
-            else:
-                new_crc = struct.pack(">I", zlib.crc32(chunk_type + chunk_data) & 0xffffffff)
-                kept.append(struct.pack(">I", length) + chunk_type + chunk_data + new_crc)
+            kept.append(data[offset:offset + 12 + length])
         offset += 12 + length
         if chunk_type == b"IEND":
             break
@@ -160,19 +178,82 @@ def save_figure(fig, path: Path, dpi=200):
     strip_png_text_chunks(path)
 
 
+def compute_expected_summary(scenario_row, architecture, params, overrides=None):
+    overrides = overrides or {}
+    orgs = int(overrides.get("organisations", scenario_row["organisations"]))
+    profile = overrides.get("signature_profile", scenario_row["signature_profile"])
+    counts = expected_event_counts(
+        scenario_row,
+        params,
+        patients=overrides.get("patients"),
+        days=overrides.get("days"),
+        access_rate=overrides.get("access_rate"),
+        revocation_probability=overrides.get("revocation_probability"),
+    )
+    ev = counts["evidence_objects"]
+    mb = storage_mb(ev, architecture, orgs, profile, params)
+    wc = write_cost_units(ev, architecture, orgs, params)
+    vu = verification_units(counts["access_events"], architecture, params)
+    return {
+        "evidence_objects": ev,
+        "storage_mb": mb,
+        "write_cost_units": wc,
+        "verification_units": vu,
+    }
+
+
+def run_sensitivity(root, scenarios, params):
+    s2 = scenarios.loc[scenarios["scenario_id"] == "S2"].iloc[0]
+    arch = "A3 Ledger-like"
+    base = compute_expected_summary(s2, arch, params)
+    perturbations = [
+        ("Signature profile", "Classical to ML-DSA-44-sized evidence", {"signature_profile": "mldsa44"}),
+        ("Patient count", "-50%", {"patients": int(params["patients_per_scenario"] * 0.5)}),
+        ("Patient count", "+50%", {"patients": int(params["patients_per_scenario"] * 1.5)}),
+        ("Simulation horizon", "-50%", {"days": int(params["simulation_horizon_days"] * 0.5)}),
+        ("Simulation horizon", "+50%", {"days": int(params["simulation_horizon_days"] * 1.5)}),
+        ("Organisational multiplicity", "3 organisations to 2", {"organisations": 2}),
+        ("Organisational multiplicity", "3 organisations to 4", {"organisations": 4}),
+        ("Access rate", "-50%", {"access_rate": float(s2["access_rate_per_patient_day"]) * 0.5}),
+        ("Access rate", "+50%", {"access_rate": float(s2["access_rate_per_patient_day"]) * 1.5}),
+        ("Revocation probability", "-50%", {"revocation_probability": float(s2["revocation_probability_over_horizon"]) * 0.5}),
+        ("Revocation probability", "+50%", {"revocation_probability": float(s2["revocation_probability_over_horizon"]) * 1.5}),
+    ]
+    rows = []
+    for driver, perturbation, overrides in perturbations:
+        x = compute_expected_summary(s2, arch, params, overrides)
+        rows.append({
+            "base_scenario": "S2",
+            "base_architecture": arch,
+            "driver": driver,
+            "perturbation": perturbation,
+            "storage_mb_base": round(base["storage_mb"], 1),
+            "storage_mb_perturbed": round(x["storage_mb"], 1),
+            "delta_storage_mb": round(x["storage_mb"] - base["storage_mb"], 1),
+            "write_cost_units_base": int(round(base["write_cost_units"])),
+            "write_cost_units_perturbed": int(round(x["write_cost_units"])),
+            "delta_write_cost_units": int(round(x["write_cost_units"] - base["write_cost_units"])),
+            "verification_units_base": int(round(base["verification_units"])),
+            "verification_units_perturbed": int(round(x["verification_units"])),
+            "delta_verification_units": int(round(x["verification_units"] - base["verification_units"])),
+        })
+    return pd.DataFrame(rows)
+
+
 def run_simulation(root: Path):
     data_dir = root / "data"
     out_tables = root / "outputs" / "tables"
     out_figs = root / "outputs" / "figures"
     out_tables.mkdir(parents=True, exist_ok=True)
     out_figs.mkdir(parents=True, exist_ok=True)
-    params_df, params = load_params(data_dir)
+    params_df, params = read_parameter_table(data_dir)
     scenarios = pd.read_csv(data_dir / "scenario_matrix.csv")
     seed = int(params["random_seed"])
     reps = int(params["monte_carlo_replications"])
     payload_mb = float(params["payload_reference_mb"])
     rng = np.random.default_rng(seed)
     all_rep_rows, summary_rows, lji_rows = [], [], []
+
     for _, s in scenarios.iterrows():
         orgs = int(s["organisations"])
         dispute = float(s["dispute_risk"])
@@ -192,6 +273,7 @@ def run_simulation(root: Path):
         access_mean = float(np.mean(rep_access))
         for arch in ARCHITECTURES:
             mb = storage_mb(ev_mean, arch, orgs, profile, params)
+            wc = write_cost_units(ev_mean, arch, orgs, params)
             vu = verification_units(access_mean, arch, params)
             ps = privacy_score(dispute, arch)
             summary_rows.append({
@@ -203,6 +285,7 @@ def run_simulation(root: Path):
                 "evidence_objects_interval_95": f"[{ev_low}-{ev_high}]",
                 "storage_mb": round(mb, 1),
                 "evidence_payload_percent": round(mb / payload_mb * 100.0, 2),
+                "write_cost_units": int(round(wc)),
                 "verification_units": int(round(vu)),
                 "privacy_score": round(ps, 2),
             })
@@ -215,84 +298,84 @@ def run_simulation(root: Path):
             "LJI": round(index, 3),
             "design_implication": preferred_architecture(index),
         })
+
     rep_df = pd.DataFrame(all_rep_rows)
     summary_df = pd.DataFrame(summary_rows)
     lji_df = pd.DataFrame(lji_rows)
-    threat_df = pd.DataFrame(THREAT_ROWS, columns=["scenario", "A1 Central audit", "A2 Hash log", "A3 Ledger-like", "interpretation"])
-    sensitivity_df = pd.DataFrame(SENSITIVITY_ROWS, columns=["driver", "perturbation", "interpretation"])
+    threats_df = pd.DataFrame(THREAT_ROWS, columns=["scenario", "A1 Central audit", "A2 Hash log", "A3 Ledger-like", "interpretation"])
+    sensitivity_df = run_sensitivity(root, scenarios, params)
+
     params_df.to_csv(out_tables / "table_parameter_register.csv", index=False)
     scenarios.to_csv(out_tables / "table_scenario_matrix.csv", index=False)
     rep_df.to_csv(out_tables / "replication_level_event_counts.csv", index=False)
     summary_df.to_csv(out_tables / "table_main_results.csv", index=False)
-    threat_df.to_csv(out_tables / "table_threat_scenarios.csv", index=False)
+    threats_df.to_csv(out_tables / "table_threat_coverage_matrix.csv", index=False)
     lji_df.to_csv(out_tables / "table_lji.csv", index=False)
-    sensitivity_df.to_csv(out_tables / "table_sensitivity_summary.csv", index=False)
-    for metric, fname, ylabel in [
-        ("storage_mb", "figure_storage_mb.png", "Storage MB"),
-        ("verification_units", "figure_verification_units.png", "Normalised verification units"),
-        ("privacy_score", "figure_privacy_score.png", "Privacy exposure proxy"),
-    ]:
-        fig, ax = plt.subplots(figsize=(10, 5.5))
-        pivot = summary_df.pivot(index="scenario_id", columns="architecture", values=metric)
-        pivot.plot(kind="bar", ax=ax)
-        ax.set_ylabel(ylabel)
-        ax.set_xlabel("Scenario")
-        ax.set_title(f"TEA-Sim {ylabel} by scenario and architecture")
-        ax.tick_params(axis="x", rotation=0)
-        save_figure(fig, out_figs / fname)
+    sensitivity_df.to_csv(out_tables / "table_sensitivity_expected_value.csv", index=False)
+
+    # Figure 1: storage overhead, sorted by S1-S5
+    pivot = summary_df.pivot(index="scenario_id", columns="architecture", values="storage_mb").loc[SCENARIO_ORDER]
     fig, ax = plt.subplots(figsize=(9, 5))
-    ax.barh(lji_df["scenario_id"], lji_df["LJI"])
-    ax.axvline(-0.15, linestyle="--")
-    ax.axvline(0.05, linestyle="--")
-    ax.set_xlabel("Ledger Justification Index")
-    ax.set_title("Scenario-based Ledger Justification Index")
+    pivot.plot(kind="bar", ax=ax)
+    ax.set_title("Modelled storage overhead under evidence-storage architectures")
+    ax.set_xlabel("Scenario")
+    ax.set_ylabel("Storage overhead (MB)")
+    ax.set_xticklabels(SCENARIO_ORDER, rotation=0)
+    save_figure(fig, out_figs / "figure_storage_mb.png")
+
+    # Figure 2: write cost
+    pivot_wc = summary_df.pivot(index="scenario_id", columns="architecture", values="write_cost_units").loc[SCENARIO_ORDER]
+    fig, ax = plt.subplots(figsize=(9, 5))
+    pivot_wc.plot(kind="bar", ax=ax)
+    ax.set_title("Normalised write-cost units under evidence-storage architectures")
+    ax.set_xlabel("Scenario")
+    ax.set_ylabel("Write-cost units")
+    ax.set_xticklabels(SCENARIO_ORDER, rotation=0)
+    save_figure(fig, out_figs / "figure_write_cost_units.png")
+
+    # Figure 3: verification units
+    pivot_vu = summary_df.pivot(index="scenario_id", columns="architecture", values="verification_units").loc[SCENARIO_ORDER]
+    fig, ax = plt.subplots(figsize=(9, 5))
+    pivot_vu.plot(kind="bar", ax=ax)
+    ax.set_title("Normalised verification units under evidence-storage architectures")
+    ax.set_xlabel("Scenario")
+    ax.set_ylabel("Verification units")
+    ax.set_xticklabels(SCENARIO_ORDER, rotation=0)
+    save_figure(fig, out_figs / "figure_verification_units.png")
+
+    # Figure 4: LJI
+    fig, ax = plt.subplots(figsize=(8, 4.5))
+    lji_plot = lji_df.set_index("scenario_id").loc[SCENARIO_ORDER]
+    lji_plot["LJI"].plot(kind="bar", ax=ax)
+    ax.axhline(0.05, linestyle="--", linewidth=1)
+    ax.axhline(-0.15, linestyle="--", linewidth=1)
+    ax.set_title("Ledger Justification Index by scenario")
+    ax.set_xlabel("Scenario")
+    ax.set_ylabel("LJI")
+    ax.set_xticklabels(SCENARIO_ORDER, rotation=0)
     save_figure(fig, out_figs / "figure_lji.png")
-    fig, ax = plt.subplots(figsize=(10, 5.8))
-    ax.axis("off")
-    boxes = [
-        (0.05, 0.70, "Mobile/wearable\ndata source"),
-        (0.25, 0.70, "FHIR-compatible\nsemantic layer"),
-        (0.45, 0.70, "Consent/policy\nstate model"),
-        (0.65, 0.70, "TrustEvidence\ngenerator"),
-        (0.85, 0.70, "Verifier /\nauditor"),
-        (0.25, 0.32, "Off-chain payload\nrepository"),
-        (0.49, 0.32, "A1 Central\naudit log"),
-        (0.66, 0.32, "A2 Append-only\nhash log"),
-        (0.84, 0.32, "A3 Ledger-like\ntrust layer"),
-    ]
-    for x, y, text in boxes:
-        ax.text(x, y, text, ha="center", va="center", bbox=dict(boxstyle="round,pad=0.45", fc="white", ec="black"))
-    arrows = [
-        ((0.12, 0.70), (0.19, 0.70)), ((0.32, 0.70), (0.39, 0.70)),
-        ((0.52, 0.70), (0.59, 0.70)), ((0.72, 0.70), (0.78, 0.70)),
-        ((0.25, 0.64), (0.25, 0.42)), ((0.65, 0.64), (0.49, 0.42)),
-        ((0.65, 0.64), (0.66, 0.42)), ((0.65, 0.64), (0.84, 0.42)),
-        ((0.85, 0.64), (0.84, 0.42)),
-    ]
-    for start, end in arrows:
-        ax.annotate("", xy=end, xytext=start, arrowprops=dict(arrowstyle="->", lw=1.2))
-    ax.text(0.5, 0.08, "Clinical payloads remain off-chain; only compact trust evidence enters the simulated evidence-storage layer.", ha="center")
-    save_figure(fig, out_figs / "figure_teasim_architecture.png")
-    return {
-        "parameters": params_df,
-        "scenarios": scenarios,
-        "main_results": summary_df,
-        "threats": threat_df,
-        "lji": lji_df,
-        "sensitivity": sensitivity_df,
-    }
+
+    # Figure 5: sensitivity delta storage
+    fig, ax = plt.subplots(figsize=(9, 5))
+    sens_plot = sensitivity_df.copy()
+    sens_plot["label"] = sens_plot["driver"] + " (" + sens_plot["perturbation"] + ")"
+    sens_plot.plot(kind="barh", x="label", y="delta_storage_mb", ax=ax, legend=False)
+    ax.set_title("Expected-value sensitivity: delta storage for S2/A3")
+    ax.set_xlabel("Delta storage (MB)")
+    ax.set_ylabel("")
+    save_figure(fig, out_figs / "figure_sensitivity_delta_storage.png")
+
+    print("TEA-Sim run complete.")
+    print("\n[main_results]\n" + summary_df.to_string(index=False))
+    print("\n[lji]\n" + lji_df.to_string(index=False))
+    print("\n[sensitivity]\n" + sensitivity_df.to_string(index=False))
 
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--root", default=str(Path(__file__).resolve().parents[1]), help="Project root directory")
+    parser.add_argument("--root", default=".")
     args = parser.parse_args()
-    root = Path(args.root).resolve()
-    results = run_simulation(root)
-    print("TEA-Sim run complete.")
-    for name, df in results.items():
-        print(f"\n[{name}]")
-        print(df.head(10).to_string(index=False))
+    run_simulation(Path(args.root).resolve())
 
 
 if __name__ == "__main__":

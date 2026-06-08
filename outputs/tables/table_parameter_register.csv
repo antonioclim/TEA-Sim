@@ -14,6 +14,9 @@ trust_evidence_a3_classical_bytes_per_org,896.0,model assumption,Classical evide
 trust_evidence_a1_mldsa44_bytes,3061.0,standards-informed model assumption,ML-DSA-44-sized signature profile informed by NIST FIPS 204,Storage calculation for crypto-agility scenario.
 trust_evidence_a2_mldsa44_bytes,3312.0,standards-informed model assumption,ML-DSA-44-sized signature profile plus hash-log overhead,Storage calculation for crypto-agility scenario.
 trust_evidence_a3_mldsa44_bytes_per_org,3220.0,standards-informed model assumption,ML-DSA-44-sized signature profile plus ledger-like overhead per organisation,Storage calculation for crypto-agility scenario.
+write_factor_a1,1.0,model assumption,Normalised central-audit write effort,Transforms evidence objects into write-cost units.
+write_factor_a2,1.18,model assumption,Normalised hash-log write effort,Transforms evidence objects into write-cost units.
+write_factor_a3,1.35,model assumption,Normalised ledger-like write effort per organisation,Transforms evidence objects into write-cost units.
 verification_factor_a1,5.18,model assumption,Normalised audit-verification effort,Transforms access events into verification units.
 verification_factor_a2,7.18,model assumption,Normalised hash-log verification effort,Transforms access events into verification units.
 verification_factor_a3,8.68,model assumption,Normalised ledger-like verification effort,Transforms access events into verification units.
