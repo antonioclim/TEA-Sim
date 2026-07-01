@@ -1,0 +1,22 @@
+{
+  "title": "TEA-Sim: Reproducibility package for standards-compatible trust-evidence interface simulation",
+  "version": "v1.5.0",
+  "creators": [
+    {
+      "name": "Clim, Antonio",
+      "affiliation": "Department of Economic Informatics and Cybernetics, Bucharest University of Economic Studies",
+      "orcid": "0000-0003-4745-0431"
+    }
+  ],
+  "description": "Reproducibility package for a standards-compatible TrustEvidence interface simulation. No identifiable clinical data, FHIR server, blockchain deployment or cryptographic runtime benchmark is included.",
+  "license": "MIT",
+  "keywords": [
+    "health information exchange",
+    "FHIR",
+    "audit evidence",
+    "simulation",
+    "tamper-evident logging",
+    "TrustEvidence",
+    "standards-compatible interface"
+  ]
+}
