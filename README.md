@@ -4,6 +4,12 @@ TEA-Sim is a reproducibility package for the study **Standards-Compatible Trust-
 
 The package contains source code, parameter registers, scenario definitions, generated CSV outputs, figures, methodological documentation and checksum manifests. It models a TrustEvidence interface that separates clinical payload custody from compact audit-evidence artefacts.
 
+## Archived version and repository
+
+Archived software version: https://doi.org/10.5281/zenodo.21095269
+
+Source repository: https://github.com/antonioclim/TEA-Sim
+
 ## Author and software creator
 
 Antonio Clim, PhD  
@@ -13,10 +19,6 @@ Email: antonio.clim@csie.ase.ro
 ORCID: https://orcid.org/0000-0003-4745-0431  
 Web of Science ResearcherID: AAC-7605-2019  
 Scopus Author ID: 55753988600
-
-## Repository
-
-Source repository: https://github.com/antonioclim/TEA-Sim
 
 ## Scope
 

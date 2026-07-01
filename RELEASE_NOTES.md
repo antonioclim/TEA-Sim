@@ -1,5 +1,7 @@
 # Release notes: v1.5.0
 
+Archived version DOI: https://doi.org/10.5281/zenodo.21095269
+
 Version v1.5.0 aligns the TEA-Sim reproducibility package with the standards-compatible TrustEvidence interface manuscript.
 
 Main changes:
