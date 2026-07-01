@@ -1,6 +1,0 @@
-scenario_id,scenario_label,organisations,access_rate_per_patient_day,revocation_probability_over_horizon,dispute_risk,signature_profile,interpretation
-S1,S1 Low-complexity direct care,1,0.08,0.005,0.10,classical,Single-controller setting with low dispute risk.
-S2,S2 Interorganisational shared care,3,0.25,0.020,0.55,classical,Multiple care organisations and role-based access.
-S3,S3 Secondary-use governance,4,0.06,0.030,0.60,classical,Lower direct access volume but higher policy and purpose sensitivity.
-S4,S4 High-dispute/high-revocation,5,0.50,0.080,0.85,classical,Stress scenario with many organisations and high revocation/dispute risk.
-S5,S5 Crypto-agility transition,3,0.25,0.020,0.55,mldsa44,Same as S2 but with ML-DSA-44-sized evidence signatures.
