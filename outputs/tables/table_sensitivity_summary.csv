@@ -1,0 +1,12 @@
+baseline_scenario,baseline_architecture,driver,perturbation,delta_storage_mb,delta_write_cost_units,delta_verification_units
+S2,A3 Ledger-like,Signature profile,Classical to ML-DSA-44-sized evidence,164.0,0,0
+S2,A3 Ledger-like,Patient count,-50%,-31.6,-47628,-10850
+S2,A3 Ledger-like,Patient count,+50%,31.6,47628,10850
+S2,A3 Ledger-like,Simulation horizon,-50%,-30.2,-45563,-10850
+S2,A3 Ledger-like,Simulation horizon,+50%,30.2,45563,10850
+S2,A3 Ledger-like,Organisational multiplicity,3 organisations to 2,-21.1,-31752,0
+S2,A3 Ledger-like,Organisational multiplicity,3 organisations to 4,21.1,31752,0
+S2,A3 Ledger-like,Access rate,-50%,-3.4,-5063,-10850
+S2,A3 Ledger-like,Access rate,+50%,3.4,5063,10850
+S2,A3 Ledger-like,Revocation probability,-50%,-0.0,-41,0
+S2,A3 Ledger-like,Revocation probability,+50%,0.0,41,0

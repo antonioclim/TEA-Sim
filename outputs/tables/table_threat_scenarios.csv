@@ -1,0 +1,8 @@
+threat_or_failure_mode,A1 Central audit,A2 Hash log,A3 Ledger-like,interpretation
+Payload modified after anchoring,High if commitment exists,High,High,"All architectures can detect payload modification if commitments are preserved; this is design-based detectability, not a penetration-test result."
+Ordinary audit-row deletion,Medium,High,Very high,Hash continuity and replicated evidence improve deletion detection.
+Malicious central-administrator deletion,Low,Medium-high,High,This is the main scenario in which a ledger-like evidence backend has a defensible advantage.
+Access after consent revocation,Medium-high,High,High,All architectures require correct consent-state modelling; replicated evidence improves independent verifiability.
+Policy-version mismatch,Medium-high,High,High,Hash-linked and replicated evidence better preserve temporal policy evidence.
+Interorganisational dispute,Low-medium,Medium,High,A ledger-like backend is most defensible when no mutually trusted audit operator exists.
+Metadata exposure risk,Low-medium,Medium,High,"The privacy cost of replicated evidence must be mitigated by minimisation, pseudonymisation and retention control."

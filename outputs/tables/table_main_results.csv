@@ -1,0 +1,16 @@
+scenario_id,scenario,architecture,signature_profile,evidence_objects_mean,evidence_objects_interval_95,storage_mb,evidence_payload_percent,write_cost_units,verification_units,privacy_score
+S1,S1 Low-complexity direct care,A1 Central audit,classical,21804,[21746-21860],16.0,4.45,21804,4141,0.29
+S1,S1 Low-complexity direct care,A2 Hash log,classical,21804,[21746-21860],19.0,5.28,25729,5740,0.44
+S1,S1 Low-complexity direct care,A3 Ledger-like,classical,21804,[21746-21860],19.5,5.43,29435,6939,0.64
+S2,S2 Interorganisational shared care,A1 Central audit,classical,23520,[23423-23616],17.3,4.8,23520,12947,0.4
+S2,S2 Interorganisational shared care,A2 Hash log,classical,23520,[23423-23616],20.5,5.7,27754,17946,0.55
+S2,S2 Interorganisational shared care,A3 Ledger-like,classical,23520,[23423-23616],63.2,17.56,95256,21695,0.75
+S3,S3 Secondary-use governance,A1 Central audit,classical,21630,[21584-21678],15.9,4.41,21630,3105,0.42
+S3,S3 Secondary-use governance,A2 Hash log,classical,21630,[21584-21678],18.9,5.24,25523,4304,0.57
+S3,S3 Secondary-use governance,A3 Ledger-like,classical,21630,[21584-21678],77.5,21.53,116802,5203,0.77
+S4,S4 High-dispute/high-revocation,A1 Central audit,classical,26076,[25940-26216],19.1,5.32,26076,25881,0.48
+S4,S4 High-dispute/high-revocation,A2 Hash log,classical,26076,[25940-26216],22.7,6.32,30770,35873,0.63
+S4,S4 High-dispute/high-revocation,A3 Ledger-like,classical,26076,[25940-26216],116.8,32.45,176013,43367,0.83
+S5,S5 Crypto-agility transition,A1 Central audit,mldsa44,23520,[23421-23613],72.0,20.0,23520,12949,0.4
+S5,S5 Crypto-agility transition,A2 Hash log,mldsa44,23520,[23421-23613],77.9,21.64,27754,17949,0.55
+S5,S5 Crypto-agility transition,A3 Ledger-like,mldsa44,23520,[23421-23613],227.2,63.11,95256,21699,0.75

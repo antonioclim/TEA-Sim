@@ -1,0 +1,22 @@
+parameter,value,parameter_class,source_or_rationale,use_in_model
+cgm_sampling_interval_minutes,5.0,observed/public dataset characteristic,BIG IDEAs / Dexcom G6 documentation,Calibrates latent CGM workload density.
+latent_cgm_samples_per_patient_day,288.0,derived,24*60/5,Documents the raw sampling density before aggregation.
+aggregation_window_hours,1.0,design assumption,Architectural minimisation principle,Converts high-frequency samples to 24 conceptual observations per patient-day.
+aggregated_observations_per_patient_day,24.0,derived,24 hours / 1-hour aggregation,Used in workload and payload calculation.
+patients_per_scenario,1000.0,scenario-based,Comparative simulation scaling assumption,Scales workloads for all scenarios.
+simulation_horizon_days,10.0,scenario-based,Common horizon for all scenarios,Controls daily anchors and provenance counts.
+monte_carlo_replications,1000.0,methodological setting,Reproducibility protocol,Generates uncertainty intervals for stochastic event counts.
+random_seed,20260526.0,methodological setting,Reproducibility protocol,Ensures deterministic pseudo-random outputs.
+payload_reference_mb,360.0,model assumption,Proxy payload volume for evidence-to-payload percentage,Denominator for evidence/payload ratio.
+trust_evidence_a1_classical_bytes,734.0,model assumption,Compact evidence object size,Storage calculation for central audit architecture.
+trust_evidence_a2_classical_bytes,872.0,model assumption,Classical evidence plus hash-chain overhead,Storage calculation for append-only hash log.
+trust_evidence_a3_classical_bytes_per_org,896.0,model assumption,Classical evidence plus ledger-like overhead per organisation,Storage calculation for ledger-like architecture.
+trust_evidence_a1_mldsa44_bytes,3061.0,standards-informed model assumption,ML-DSA-44-sized signature profile informed by NIST FIPS 204,Storage calculation for crypto-agility scenario.
+trust_evidence_a2_mldsa44_bytes,3312.0,standards-informed model assumption,ML-DSA-44-sized signature profile plus hash-log overhead,Storage calculation for crypto-agility scenario.
+trust_evidence_a3_mldsa44_bytes_per_org,3220.0,standards-informed model assumption,ML-DSA-44-sized signature profile plus ledger-like overhead per organisation,Storage calculation for crypto-agility scenario.
+verification_factor_a1,5.18,model assumption,Normalised audit-verification effort,Transforms access events into verification units.
+verification_factor_a2,7.18,model assumption,Normalised hash-log verification effort,Transforms access events into verification units.
+verification_factor_a3,8.68,model assumption,Normalised ledger-like verification effort,Transforms access events into verification units.
+write_cost_factor_a1,1.00,model assumption,Normalised single write per evidence object for central audit storage.,Transforms evidence objects into normalised write-cost units for A1.
+write_cost_factor_a2,1.18,model assumption,Normalised write overhead for append-only hash/log linking.,Transforms evidence objects into normalised write-cost units for A2.
+write_cost_factor_a3_per_org,1.35,model assumption,Normalised write overhead per participating organisation for replicated ledger-like evidence.,Transforms evidence objects and organisational multiplicity into normalised write-cost units for A3.

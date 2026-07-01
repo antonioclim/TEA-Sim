@@ -1,0 +1,6 @@
+scenario_id,scenario,benefit_drivers,cost_drivers,LJI,lower_threshold,upper_threshold,design_implication
+S1,S1 Low-complexity direct care,0.061,0.291,-0.231,-0.05,0.1,A1/A2 preferred; A3 weakly justified or disproportionate.
+S2,S2 Interorganisational shared care,0.46,0.435,0.025,-0.05,0.1,Borderline; A2 usually proportionate; A3 requires explicit independent-audit need.
+S3,S3 Secondary-use governance,0.589,0.513,0.076,-0.05,0.1,Borderline; A2 usually proportionate; A3 requires explicit independent-audit need.
+S4,S4 High-dispute/high-revocation,0.932,0.68,0.253,-0.05,0.1,A3 may be justified under stated assumptions.
+S5,S5 Crypto-agility transition,0.46,0.605,-0.145,-0.05,0.1,A1/A2 preferred; A3 weakly justified or disproportionate.
