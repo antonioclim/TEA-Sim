@@ -1,8 +1,0 @@
-scenario,A1 Central audit,A2 Hash log,A3 Ledger-like,interpretation
-Payload modified after anchoring,High if commitment exists,High,High,All architectures can detect this if payload commitments are preserved.
-Ordinary audit-row deletion,Medium,High,Very high,Hash continuity and replicated evidence improve detection.
-Malicious central-administrator deletion,Low,Medium-high,High,This is the main scenario where A3 has a clear advantage.
-Access after consent revocation,Medium-high,High,High,All require correct consent-state modelling; A3 improves independent verifiability.
-Policy-version mismatch,Medium-high,High,High,A2 and A3 better preserve temporal policy evidence.
-Interorganisational dispute,Low-medium,Medium,High,A3 is most defensible when no mutually trusted audit operator exists.
-Metadata exposure risk,Low-medium,Medium,High,The privacy cost of A3 must be mitigated by minimisation and pseudonymisation.
