@@ -46,6 +46,7 @@ The script regenerates the canonical outputs in `outputs/tables/` and `outputs/f
 - `outputs/tables/table_lji.csv`
 - `outputs/tables/table_sensitivity_summary.csv`
 - `outputs/figures/figure_2_storage_lji_composite.png`
+- `docs/FIGURE_PROVENANCE.md`
 
 ## Interpretation boundaries
 

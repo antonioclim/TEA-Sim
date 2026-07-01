@@ -12,3 +12,7 @@ Main changes:
 - composite storage/LJI figure generated from source code;
 - repository metadata simplified for public archival use;
 - internal administrative notes removed from the public package.
+
+## Figure pipeline update
+
+Version 1.5.0 includes a deterministic figure-generation pipeline with explicit Figure 1 node/edge specifications, vector figure masters and high-resolution raster exports.

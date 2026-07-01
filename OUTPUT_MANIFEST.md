@@ -18,10 +18,27 @@ This manifest links the generated outputs to their role in the associated study.
 
 | Output | Role |
 |---|---|
-| `outputs/figures/figure_teasim_architecture.png` | Architecture schematic |
-| `outputs/figures/figure_storage_mb.png` | Storage comparison |
-| `outputs/figures/figure_verification_units.png` | Verification-unit comparison |
-| `outputs/figures/figure_write_cost_units.png` | Write-cost comparison |
-| `outputs/figures/figure_privacy_score.png` | Metadata-exposure proxy comparison |
-| `outputs/figures/figure_lji.png` | Ledger Justification Index comparison |
-| `outputs/figures/figure_2_storage_lji_composite.png` | Composite storage and LJI figure |
+| `outputs/figures/figure_teasim_architecture.png` | Figure 1 architecture schematic |
+| `outputs/figures/figure_teasim_architecture.pdf` | Figure 1 vector master |
+| `outputs/figures/figure_teasim_architecture.svg` | Figure 1 editable vector master |
+| `outputs/figures/figure_teasim_architecture.tiff` | Figure 1 high-resolution raster export |
+| `outputs/figures/figure_2_storage_lji_composite.png` | Figure 2 composite storage and LJI plot |
+| `outputs/figures/figure_2_storage_lji_composite.pdf` | Figure 2 vector master |
+| `outputs/figures/figure_2_storage_lji_composite.svg` | Figure 2 editable vector master |
+| `outputs/figures/figure_2_storage_lji_composite.tiff` | Figure 2 high-resolution raster export |
+| `outputs/figures/figure_storage_mb.png` | Auxiliary storage comparison |
+| `outputs/figures/figure_verification_units.png` | Auxiliary verification-unit comparison |
+| `outputs/figures/figure_write_cost_units.png` | Auxiliary write-cost comparison |
+| `outputs/figures/figure_privacy_score.png` | Auxiliary metadata-exposure proxy comparison |
+| `outputs/figures/figure_lji.png` | Auxiliary Ledger Justification Index comparison |
+| `outputs/figures/graphical_abstract.png` | Graphical abstract |
+| `outputs/figures/graphical_abstract.tiff` | High-resolution graphical abstract export |
+
+## Figure specifications
+
+| Input | Role |
+|---|---|
+| `data/figure_specs/figure_1_nodes.csv` | Node positions and labels for Figure 1 |
+| `data/figure_specs/figure_1_edges.csv` | Edge routing and flow type for Figure 1 |
+| `data/figure_specs/figure_1_groups.csv` | Lane definitions for Figure 1 |
+| `data/figure_specs/figure_1_legend.csv` | Flow-type legend for Figure 1 |
