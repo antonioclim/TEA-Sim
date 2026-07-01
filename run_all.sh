@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
 set -euo pipefail
-python src/teasim_reproduce.py --root .
-python src/make_checksums.py
+ROOT="$(cd "$(dirname "$0")" && pwd)"
+python "$ROOT/src/teasim_reproduce.py" --root "$ROOT"
+python "$ROOT/src/make_checksums.py"

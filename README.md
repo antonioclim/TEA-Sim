@@ -1,89 +1,54 @@
-# TEA-Sim JCIS Reproducibility Package
+# TEA-Sim reproducibility package (v1.5.0)
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20587315.svg)](https://doi.org/10.5281/zenodo.20587315)
+TEA-Sim is a reproducibility package for the study **Standards-Compatible Trust-Evidence Interfaces for Auditable Health Information Exchange: A Simulation Study**.
 
-This archive contains the reproducibility materials for the study **Simulation-Based Design and Evaluation of a FHIR-Compatible Trust-Evidence Architecture for Auditable Mobile Health Information Exchange**.
+The package contains source code, parameter registers, scenario definitions, generated CSV outputs, figures, methodological documentation and checksum manifests. It models a TrustEvidence interface that separates clinical payload custody from compact audit-evidence artefacts.
 
-## Archived record
+## Author and software creator
 
-Preserved Zenodo record: <https://doi.org/10.5281/zenodo.20587315>
+Antonio Clim, PhD  
+Department of Economic Informatics and Cybernetics  
+Bucharest University of Economic Studies  
+Email: antonio.clim@csie.ase.ro  
+ORCID: https://orcid.org/0000-0003-4745-0431  
+Web of Science ResearcherID: AAC-7605-2019  
+Scopus Author ID: 55753988600
 
-Source repository: <https://github.com/antonioclim/TEA-Sim>
+## Repository
+
+Source repository: https://github.com/antonioclim/TEA-Sim
 
 ## Scope
 
-TEA-Sim is a virtual simulation model for comparing three evidence-storage architectures:
+The model compares three evidence-storage backends behind the same TrustEvidence interface:
 
-- A1: central audit log;
-- A2: append-only hash log;
-- A3: ledger-like trust layer.
+- A1 central audit log;
+- A2 append-only hash log;
+- A3 ledger-like replicated evidence backend.
 
-The archive contains no identifiable clinical data and no patient-level dataset. It does not contain a production FHIR server, a blockchain deployment, measured system latency or post-quantum cryptographic runtime. The outputs are produced from the parameter register, scenario matrix and simulation script supplied here.
+The package does not include identifiable clinical data. It does not implement a production FHIR server, validate FHIR JSON resources, deploy a blockchain network, measure system latency, validate clinical outcomes or benchmark post-quantum cryptographic runtime.
 
-## Reproduction
+## Reproduction entry point
 
-### Python virtual environment
+The canonical entry point is:
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -r src/requirements.txt
 bash run_all.sh
 ```
 
-On Windows, activate the environment with `.venv\\Scripts\\activate` and then run the Python commands directly if Bash is unavailable:
+The script regenerates the canonical outputs in `outputs/tables/` and `outputs/figures/` and updates `SHA256SUMS.txt`.
 
-```bash
-python src/teasim_reproduce.py --root .
-python src/make_checksums.py
-```
+## Key outputs
 
-### Conda
+- `outputs/tables/table_main_results.csv`
+- `outputs/tables/table_lji.csv`
+- `outputs/tables/table_sensitivity_summary.csv`
+- `outputs/figures/figure_2_storage_lji_composite.png`
 
-```bash
-conda env create -f src/environment.yml
-conda activate teasim-jcis
-bash run_all.sh
-```
+## Interpretation boundaries
 
-## Fixed settings
+The outputs are simulation artefacts under declared assumptions. FHIR is used as a conceptual standards boundary. Ledger-like storage is modelled as an evidence backend rather than as a complete blockchain implementation. ML-DSA-44 is used as an artefact-size profile rather than as a runtime implementation. Privacy and governance values are proxies, not legal-compliance scores.
 
-- Random seed: `20260526`
-- Patients per scenario: `1000`
-- Simulation horizon: `10 days`
-- Replications per scenario: `1000`
-- Latent CGM sampling basis: `5 minutes`
-- Conceptual aggregation: `24 observations per patient-day`
+## Licence
 
-## Main files
-
-- `protocol/TEA-Sim_reproducibility_protocol.md`
-- `data/parameter_register.csv`
-- `data/scenario_matrix.csv`
-- `data/parameter_rationale_extended.csv`
-- `src/teasim_reproduce.py`
-- `outputs/tables/*.csv`
-- `outputs/figures/*.png`
-- `docs/model_logic.md`
-- `docs/parameter_rationale.md`
-- `docs/STRESS_reporting_checklist.md`
-- `references/TEASIM_references.bib`
-- `SHA256SUMS.txt`
-
-## Canonical outputs
-
-The canonical numerical outputs are the CSV files in `outputs/tables/`. If formatted tables elsewhere differ from these CSV files, the CSV files should be treated as authoritative.
-
-## Integrity check
-
-After running the package, regenerate checksums:
-
-```bash
-python src/make_checksums.py
-```
-
-The checksum manifest is stored in `SHA256SUMS.txt`.
-
-## Citation
-
-Clim, A. (2026). *TEA-Sim: Reproducibility package for a FHIR-compatible trust-evidence architecture simulation* (Version 1.0.1) [Computer software]. Zenodo. https://doi.org/10.5281/zenodo.20587315
+MIT License.
