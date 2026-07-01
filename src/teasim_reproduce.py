@@ -19,6 +19,7 @@ from typing import Dict, Tuple
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from figure_style import make_all_figures
 
 ARCHITECTURES = ["A1 Central audit", "A2 Hash log", "A3 Ledger-like"]
 
@@ -240,72 +241,9 @@ def generate_sensitivity_table(params: dict, scenarios: pd.DataFrame) -> pd.Data
     return pd.DataFrame(rows)
 
 
-def make_figures(summary_df: pd.DataFrame, lji_df: pd.DataFrame, out_figs: Path) -> None:
-    for metric, fname, ylabel in [
-        ("storage_mb", "figure_storage_mb.png", "Storage MB"),
-        ("verification_units", "figure_verification_units.png", "Normalised verification units"),
-        ("privacy_score", "figure_privacy_score.png", "Metadata-exposure proxy"),
-        ("write_cost_units", "figure_write_cost_units.png", "Normalised write-cost units"),
-    ]:
-        fig, ax = plt.subplots(figsize=(10, 5.5))
-        pivot = summary_df.pivot(index="scenario_id", columns="architecture", values=metric)
-        pivot.plot(kind="bar", ax=ax)
-        ax.set_ylabel(ylabel)
-        ax.set_xlabel("Scenario")
-        ax.set_title(f"TEA-Sim {ylabel} by scenario and architecture")
-        ax.tick_params(axis="x", rotation=0)
-        save_figure(fig, out_figs / fname)
-
-    fig, ax = plt.subplots(figsize=(9, 5))
-    ax.barh(lji_df["scenario_id"], lji_df["LJI"])
-    ax.axvline(LJI_LOWER_THRESHOLD, linestyle="--")
-    ax.axvline(LJI_UPPER_THRESHOLD, linestyle="--")
-    ax.set_xlabel("Ledger Justification Index")
-    ax.set_title("Scenario-based Ledger Justification Index")
-    save_figure(fig, out_figs / "figure_lji.png")
-
-    # Composite Figure 2 used in the manuscript.
-    fig, axes = plt.subplots(1, 2, figsize=(13, 5.5))
-    storage_pivot = summary_df.pivot(index="scenario_id", columns="architecture", values="storage_mb")
-    storage_pivot.plot(kind="bar", ax=axes[0])
-    axes[0].set_ylabel("Storage MB")
-    axes[0].set_xlabel("Scenario")
-    axes[0].set_title("A. Modelled storage overhead")
-    axes[0].tick_params(axis="x", rotation=0)
-    axes[1].barh(lji_df["scenario_id"], lji_df["LJI"])
-    axes[1].axvline(LJI_LOWER_THRESHOLD, linestyle="--")
-    axes[1].axvline(LJI_UPPER_THRESHOLD, linestyle="--")
-    axes[1].set_xlabel("Ledger Justification Index")
-    axes[1].set_title("B. Ledger-justification heuristic")
-    fig.suptitle("Storage burden and conditional ledger justification")
-    save_figure(fig, out_figs / "figure_2_storage_lji_composite.png")
-
-    fig, ax = plt.subplots(figsize=(10, 5.8))
-    ax.axis("off")
-    boxes = [
-        (0.05, 0.70, "Mobile/wearable\ndata source"),
-        (0.25, 0.70, "FHIR semantic\nboundary"),
-        (0.45, 0.70, "Consent/policy\nstate model"),
-        (0.65, 0.70, "TrustEvidence\ninterface"),
-        (0.85, 0.70, "Verifier /\nauditor"),
-        (0.25, 0.32, "Off-chain payload\nrepository"),
-        (0.49, 0.32, "A1 Central\naudit log"),
-        (0.66, 0.32, "A2 Append-only\nhash log"),
-        (0.84, 0.32, "A3 Ledger-like\nevidence backend"),
-    ]
-    for x, y, text in boxes:
-        ax.text(x, y, text, ha="center", va="center", bbox=dict(boxstyle="round,pad=0.45", fc="white", ec="black"))
-    arrows = [
-        ((0.12, 0.70), (0.19, 0.70)), ((0.32, 0.70), (0.39, 0.70)),
-        ((0.52, 0.70), (0.59, 0.70)), ((0.72, 0.70), (0.78, 0.70)),
-        ((0.25, 0.64), (0.25, 0.42)), ((0.65, 0.64), (0.49, 0.42)),
-        ((0.65, 0.64), (0.66, 0.42)), ((0.65, 0.64), (0.84, 0.42)),
-        ((0.85, 0.64), (0.84, 0.42)),
-    ]
-    for start, end in arrows:
-        ax.annotate("", xy=end, xytext=start, arrowprops=dict(arrowstyle="->", lw=1.2))
-    ax.text(0.5, 0.08, "Clinical payloads remain off-chain; compact trust evidence is routed to alternative evidence-storage backends.", ha="center")
-    save_figure(fig, out_figs / "figure_teasim_architecture.png")
+def make_figures(summary_df: pd.DataFrame, lji_df: pd.DataFrame, out_figs: Path, root: Path) -> None:
+    """Generate all manuscript and auxiliary figures from canonical tables and figure specifications."""
+    make_all_figures(summary_df, lji_df, out_figs, root)
 
 
 def run_simulation(root: Path):
@@ -384,7 +322,7 @@ def run_simulation(root: Path):
     lji_df.to_csv(out_tables / "table_lji.csv", index=False)
     sensitivity_df.to_csv(out_tables / "table_sensitivity_summary.csv", index=False)
 
-    make_figures(summary_df, lji_df, out_figs)
+    make_figures(summary_df, lji_df, out_figs, root)
 
     return {
         "parameters": params_df,

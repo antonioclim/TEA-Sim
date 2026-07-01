@@ -1,0 +1,5 @@
+edge_type,label,linestyle
+payload,Payload custody,dashed
+evidence,Evidence emission,solid
+evidence_write,Evidence write,solid
+verification,Audit/query access,dotted
