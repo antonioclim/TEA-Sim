@@ -1,18 +1,14 @@
-# Release notes: v1.5.0
+# Release notes: v1.5.1
 
-Archived version DOI: https://doi.org/10.5281/zenodo.21095269
+Version DOI: https://doi.org/10.5281/zenodo.21134217.
 
-Version v1.5.0 aligns the TEA-Sim reproducibility package with the standards-compatible TrustEvidence interface manuscript.
+Version v1.5.1 is a patch release of the TEA-Sim reproducibility package for the standards-compatible TrustEvidence interface manuscript.
 
-Main changes:
+Changes from v1.5.0:
 
-- single-author metadata standardised for Antonio Clim;
-- deterministic generation of main results, LJI outputs, sensitivity analysis and figures;
-- explicit write-cost output added to the generated results;
-- composite storage/LJI figure generated from source code;
-- repository metadata simplified for public archival use;
-- internal administrative notes removed from the public package.
+- removes local Python bytecode artefacts from the public archives;
+- preserves the professional script-generated Figure 1, Figure 2 and Figure 3 pipeline;
+- keeps the GitHub and Zenodo packages free of internal audit notes, submission files and workflow instructions;
+- preserves all simulation parameters, canonical CSV outputs, model logic and manuscript results.
 
-## Figure pipeline update
-
-Version 1.5.0 includes a deterministic figure-generation pipeline with explicit Figure 1 node/edge specifications, vector figure masters and high-resolution raster exports.
+The release contains no identifiable clinical data. It does not implement a production FHIR server, FHIR conformance test, blockchain deployment, measured system latency, clinical validation or post-quantum cryptographic runtime benchmark.

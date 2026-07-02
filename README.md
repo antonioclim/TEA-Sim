@@ -1,4 +1,4 @@
-# TEA-Sim reproducibility package (v1.5.0)
+# TEA-Sim reproducibility package (v1.5.1)
 
 TEA-Sim is a reproducibility package for the study **Standards-Compatible Trust-Evidence Interfaces for Auditable Health Information Exchange: A Simulation Study**.
 
@@ -6,7 +6,7 @@ The package contains source code, parameter registers, scenario definitions, gen
 
 ## Archived version and repository
 
-Archived software version: https://doi.org/10.5281/zenodo.21095269
+Archived software version: https://doi.org/10.5281/zenodo.21134217.
 
 Source repository: https://github.com/antonioclim/TEA-Sim
 
@@ -45,7 +45,8 @@ The script regenerates the canonical outputs in `outputs/tables/` and `outputs/f
 - `outputs/tables/table_main_results.csv`
 - `outputs/tables/table_lji.csv`
 - `outputs/tables/table_sensitivity_summary.csv`
-- `outputs/figures/figure_2_storage_lji_composite.png`
+- `outputs/figures/figure_storage_mb.png`
+- `outputs/figures/figure_lji.png`
 - `docs/FIGURE_PROVENANCE.md`
 
 ## Interpretation boundaries

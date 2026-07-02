@@ -11,6 +11,7 @@ authors:
 abstract: "Reproducible simulation package for a standards-compatible TrustEvidence interface for auditable health information exchange."
 repository-code: "https://github.com/antonioclim/TEA-Sim"
 url: "https://github.com/antonioclim/TEA-Sim"
+doi: "10.5281/zenodo.21134217"
 keywords:
   - health information exchange
   - audit evidence
