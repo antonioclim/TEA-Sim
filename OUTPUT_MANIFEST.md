@@ -22,15 +22,11 @@ This manifest links the generated outputs to their role in the associated study.
 | `outputs/figures/figure_teasim_architecture.pdf` | Figure 1 vector master |
 | `outputs/figures/figure_teasim_architecture.svg` | Figure 1 editable vector master |
 | `outputs/figures/figure_teasim_architecture.tiff` | Figure 1 high-resolution raster export |
-| `outputs/figures/figure_2_storage_lji_composite.png` | Figure 2 composite storage and LJI plot |
-| `outputs/figures/figure_2_storage_lji_composite.pdf` | Figure 2 vector master |
-| `outputs/figures/figure_2_storage_lji_composite.svg` | Figure 2 editable vector master |
-| `outputs/figures/figure_2_storage_lji_composite.tiff` | Figure 2 high-resolution raster export |
-| `outputs/figures/figure_storage_mb.png` | Auxiliary storage comparison |
+| `outputs/figures/figure_storage_mb.png` | Manuscript Figure 2 storage-burden plot |
 | `outputs/figures/figure_verification_units.png` | Auxiliary verification-unit comparison |
 | `outputs/figures/figure_write_cost_units.png` | Auxiliary write-cost comparison |
 | `outputs/figures/figure_privacy_score.png` | Auxiliary metadata-exposure proxy comparison |
-| `outputs/figures/figure_lji.png` | Auxiliary Ledger Justification Index comparison |
+| `outputs/figures/figure_lji.png` | Manuscript Figure 3 Ledger Justification Index plot |
 | `outputs/figures/graphical_abstract.png` | Graphical abstract |
 | `outputs/figures/graphical_abstract.tiff` | High-resolution graphical abstract export |
 
