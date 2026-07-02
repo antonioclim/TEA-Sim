@@ -1,9 +1,8 @@
 {
   "title": "TEA-Sim: Reproducibility package for standards-compatible trust-evidence interface simulation",
-  "version": "v1.5.0",
-  "doi": "10.5281/zenodo.21095269",
+  "version": "v1.5.1",
   "upload_type": "software",
-  "publication_date": "2026-07-01",
+  "publication_date": "2026-07-02",
   "creators": [
     {
       "name": "Clim, Antonio",
@@ -11,7 +10,7 @@
       "orcid": "0000-0003-4745-0431"
     }
   ],
-  "description": "Reproducibility package for a standards-compatible TrustEvidence interface simulation. No identifiable clinical data, FHIR server, blockchain deployment or cryptographic runtime benchmark is included.",
+  "description": "Reproducibility package for a standards-compatible TrustEvidence interface simulation. Version v1.5.1 is a patch release that removes local bytecode artefacts and preserves the script-generated figure pipeline. No identifiable clinical data, FHIR server, blockchain deployment or cryptographic runtime benchmark is included.",
   "license": "MIT",
   "keywords": [
     "health information exchange",
