@@ -73,7 +73,7 @@ def strip_png_text_chunks(path: Path) -> None:
     path.write_bytes(b"".join(kept))
 
 
-def save_public_figure(fig, base: Path, png_dpi: int = 300, tiff_dpi: int = 600, vector: bool = True) -> None:
+def save_public_figure(fig, base: Path, png_dpi: int = 300, tiff_dpi: int = 300, vector: bool = True) -> None:
     base.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(base.with_suffix(".png"), dpi=png_dpi, bbox_inches="tight", pad_inches=0.04)
     strip_png_text_chunks(base.with_suffix(".png"))
@@ -234,7 +234,7 @@ def make_architecture_figure(root: Path, out_figs: Path) -> None:
               ncol=3, columnspacing=1.6, handlelength=2.2)
     ax.text(0.965, 0.055, "Conceptual interface model; not a production FHIR server or blockchain deployment.",
             ha="right", va="bottom", fontsize=7.2, color=COL["muted"])
-    save_public_figure(fig, out_figs / "figure_teasim_architecture", png_dpi=300, tiff_dpi=600, vector=True)
+    save_public_figure(fig, out_figs / "figure_teasim_architecture", png_dpi=300, tiff_dpi=300, vector=True)
 
 
 def make_metric_dotplot(summary_df: pd.DataFrame, metric: str, out_figs: Path, fname: str, xlabel: str, logx: bool = False) -> None:
@@ -260,67 +260,6 @@ def make_metric_dotplot(summary_df: pd.DataFrame, metric: str, out_figs: Path, f
                       markeredgecolor="#222222", markersize=6, label=st["label"]) for st in ARCH_STYLE.values()]
     ax.legend(handles=handles, frameon=False, ncol=3, loc="upper center", bbox_to_anchor=(0.5, 1.12))
     save_public_figure(fig, out_figs / fname, png_dpi=300, tiff_dpi=600, vector=True)
-
-
-def make_storage_lji_figure(summary_df: pd.DataFrame, lji_df: pd.DataFrame, out_figs: Path) -> None:
-    scenarios = list(pd.unique(summary_df["scenario_id"]))
-    y = np.arange(len(scenarios))
-    fig, axes = plt.subplots(1, 2, figsize=(13.0, 5.5), gridspec_kw={"width_ratios": [1.25, 1.0]})
-    ax = axes[0]
-    for i, scenario in enumerate(scenarios):
-        vals = summary_df.loc[summary_df["scenario_id"] == scenario, ["architecture", "storage_mb"]].set_index("architecture")["storage_mb"]
-        ax.plot([vals.min(), vals.max()], [i, i], color="#d8d8d8", lw=1.1, zorder=1)
-        for arch, st in ARCH_STYLE.items():
-            val = float(vals.loc[arch])
-            ax.scatter(val, i, marker=st["marker"], s=42, color=st["color"], edgecolors="#222222", linewidths=0.4, zorder=3)
-    ax.set_xscale("log")
-    ax.set_yticks(y)
-    ax.set_yticklabels(scenarios)
-    ax.invert_yaxis()
-    ax.set_xlabel("Storage burden (MB, log scale)")
-    ax.set_title("A. Modelled storage burden", loc="left", fontweight="bold")
-    ax.grid(axis="x", color="#eeeeee", linewidth=0.8)
-    ax.set_xlim(12, 300)
-    ax.set_xticks([20, 50, 100, 200])
-    ax.set_xticklabels(["20", "50", "100", "200"])
-    handles = [Line2D([0], [0], marker=st["marker"], color="none", markerfacecolor=st["color"],
-                      markeredgecolor="#222222", markersize=6, label=st["label"]) for st in ARCH_STYLE.values()]
-    ax.legend(handles=handles, frameon=False, ncol=1, loc="upper right", bbox_to_anchor=(1.0, 0.98))
-
-    # Annotate the two largest values without overcrowding.
-    for scenario in ["S4", "S5"]:
-        row = summary_df[(summary_df["scenario_id"] == scenario) & (summary_df["architecture"] == "A3 Ledger-like")].iloc[0]
-        yi = scenarios.index(scenario)
-        ax.annotate(f"{row['storage_mb']:.1f} MB", xy=(float(row["storage_mb"]), yi),
-                    xytext=(6, -8), textcoords="offset points", fontsize=7.3, color=COL["ink"])
-
-    ax2 = axes[1]
-    lji_lookup = lji_df.set_index("scenario_id")
-    for i, scenario in enumerate(scenarios):
-        value = float(lji_lookup.loc[scenario, "LJI"])
-        ax2.plot([0, value], [i, i], color="#bdbdbd", lw=1.2, zorder=1)
-        ax2.scatter(value, i, marker="D", s=38, color=COL["lji"], edgecolors="#222222", linewidths=0.35, zorder=3)
-        label_x = value + 0.012
-        label_ha = "left"
-        if value > 0.24:
-            label_x = value - 0.012
-            label_ha = "right"
-        ax2.text(label_x, i, f"{value:+.3f}",
-                 ha=label_ha, va="center", fontsize=7.4, color=COL["ink"])
-    ax2.axvline(0, color="#8a8a8a", lw=0.9)
-    ax2.axvline(LJI_LOWER_THRESHOLD, color="#a6a6a6", lw=0.8, linestyle=(0, (3, 2)))
-    ax2.axvline(LJI_UPPER_THRESHOLD, color="#a6a6a6", lw=0.8, linestyle=(0, (3, 2)))
-    ax2.set_yticks(y)
-    ax2.set_yticklabels([])
-    ax2.invert_yaxis()
-    ax2.set_xlabel("Ledger Justification Index")
-    ax2.set_title("B. Conditional ledger justification", loc="left", fontweight="bold")
-    ax2.set_xlim(-0.26, 0.30)
-    ax2.grid(axis="x", color="#eeeeee", linewidth=0.8)
-    ax2.text(LJI_LOWER_THRESHOLD, -0.50, "boundary", ha="center", va="bottom", fontsize=7.2, color=COL["muted"])
-    ax2.text(LJI_UPPER_THRESHOLD, -0.50, "positive threshold", ha="center", va="bottom", fontsize=7.2, color=COL["muted"])
-    fig.subplots_adjust(wspace=0.08)
-    save_public_figure(fig, out_figs / "figure_2_storage_lji_composite", png_dpi=300, tiff_dpi=600, vector=True)
 
 
 def make_lji_figure(lji_df: pd.DataFrame, out_figs: Path) -> None:
@@ -366,12 +305,11 @@ def make_graphical_abstract(out_figs: Path) -> None:
     ax.text(0.5, 0.28,
             "Payload repositories remain authoritative; audit evidence is stored centrally, hash-linked or ledger-like according to governance need.",
             ha="center", va="center", fontsize=9.2, color=COL["ink"])
-    save_public_figure(fig, out_figs / "graphical_abstract", png_dpi=300, tiff_dpi=600, vector=True)
+    save_public_figure(fig, out_figs / "graphical_abstract", png_dpi=300, tiff_dpi=300, vector=True)
 
 
 def make_all_figures(summary_df: pd.DataFrame, lji_df: pd.DataFrame, out_figs: Path, root: Path) -> None:
     make_architecture_figure(root, out_figs)
-    make_storage_lji_figure(summary_df, lji_df, out_figs)
     make_lji_figure(lji_df, out_figs)
     make_metric_dotplot(summary_df, "storage_mb", out_figs, "figure_storage_mb", "Storage burden (MB, log scale)", logx=True)
     make_metric_dotplot(summary_df, "verification_units", out_figs, "figure_verification_units", "Normalised verification units", logx=False)

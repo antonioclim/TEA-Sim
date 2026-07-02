@@ -26,7 +26,8 @@ Regenerate the canonical TEA-Sim tables and figures for the standards-compatible
 - `outputs/tables/table_main_results.csv`
 - `outputs/tables/table_lji.csv`
 - `outputs/tables/table_sensitivity_summary.csv`
-- `outputs/figures/figure_2_storage_lji_composite.png`
+- `outputs/figures/figure_storage_mb.png`
+- `outputs/figures/figure_lji.png`
 
 ## Boundaries
 
